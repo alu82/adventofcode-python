@@ -30,7 +30,6 @@ edges = mapEntries[1]
 # part 1
 totalOrbits = 0
 for node in nodes:
-    t = calcOrbits(node, edges)
     totalOrbits += len(calcOrbits(node, edges))
 print(totalOrbits)
 
