@@ -1,4 +1,5 @@
 import os
+import colorama
 
 # Preparation            
 script_dir = os.path.dirname(__file__)
@@ -41,15 +42,32 @@ for layer in layers:
         if picture[i]=='2':
             picture[i]=pixel
 
-
-
 encodedPicture = ""
 for i in range(height):
     pixelRow = ''.join(picture[i*width:(i+1)*width])
-    pixelRow = pixelRow.replace('0', ' ')
-    pixelRow = pixelRow.replace('1', u'\u2588')
+    pixelRow = pixelRow.replace('0', 'X')
+    pixelRow = pixelRow.replace('1', ' ')
     pixelRow = pixelRow.replace('2', ' ')
     encodedPicture += pixelRow + "\n"
 
 print(encodedPicture)
+
+encodedPicture = ""
+block = u'\u2588'
+colors = {
+    '0': colorama.Fore.BLACK,
+    '1': colorama.Fore.WHITE,
+    '2': colorama.Fore.YELLOW # some other color for transparent
+}
+
+for i, pixel in enumerate(picture):
+    coloredPixel = colors[pixel] + block
+    encodedPicture += coloredPixel + ("\n" if (i+1)%width==0 else "")
+
+print(encodedPicture)
+
+
+
+
+
 
