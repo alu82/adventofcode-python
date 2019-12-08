@@ -17,6 +17,8 @@ while endIndex<len(input)+1:
     startIndex+=layerSize
     endIndex+=layerSize
 
+# Part 1
+
 result=-1
 minZeros=layerSize+1
 for layer in layers:
@@ -27,6 +29,8 @@ for layer in layers:
 
 print(result)
 
+
+# Part 2
 
 picture=[]
 for i in range(layerSize):
@@ -42,9 +46,9 @@ for layer in layers:
 encodedPicture = ""
 for i in range(height):
     pixelRow = ''.join(picture[i*width:(i+1)*width])
-    pixelRow = pixelRow.replace('0', 'X')
-    pixelRow = pixelRow.replace('1', ' ')
-    pixelRow = pixelRow.replace('2', '')
+    pixelRow = pixelRow.replace('0', ' ')
+    pixelRow = pixelRow.replace('1', u'\u2588')
+    pixelRow = pixelRow.replace('2', ' ')
     encodedPicture += pixelRow + "\n"
 
 print(encodedPicture)
