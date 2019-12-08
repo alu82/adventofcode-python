@@ -2,6 +2,7 @@ import itertools
 
 class ShipComputer:
 
+    name = ""
     program = []
     arguments = []
     pointer = 0
@@ -17,7 +18,8 @@ class ShipComputer:
     EQU = 8
     EXT = 99
 
-    def __init__(self, program, arguments):
+    def __init__(self, name, program, arguments):
+        self.name = name
         for value in program:
             self.program.append(int(value))
         self.arguments = arguments
@@ -108,44 +110,3 @@ class ShipComputer:
         while self.running and self.pointer<len(self.program):
             result = self.executeNextOperation()
         return result
-
-
-program = [3,8,1001,8,10,8,105,1,0,0,21,38,47,72,97,122,203,284,365,446,99999,3,9,1001,9,3,9,1002,9,5,9,1001,9,4,9,4,9,99,3,9,102,3,9,9,4,9,99,3,9,1001,9,2,9,102,5,9,9,101,3,9,9,1002,9,5,9,101,4,9,9,4,9,99,3,9,101,5,9,9,1002,9,3,9,101,2,9,9,102,3,9,9,1001,9,2,9,4,9,99,3,9,101,3,9,9,102,2,9,9,1001,9,4,9,1002,9,2,9,101,2,9,9,4,9,99,3,9,1001,9,2,9,4,9,3,9,101,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,1001,9,1,9,4,9,3,9,102,2,9,9,4,9,3,9,101,2,9,9,4,9,3,9,1001,9,1,9,4,9,3,9,101,2,9,9,4,9,3,9,101,1,9,9,4,9,3,9,1001,9,2,9,4,9,99,3,9,1001,9,1,9,4,9,3,9,101,1,9,9,4,9,3,9,101,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,101,2,9,9,4,9,3,9,101,1,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,1,9,9,4,9,3,9,102,2,9,9,4,9,3,9,102,2,9,9,4,9,99,3,9,1001,9,2,9,4,9,3,9,1002,9,2,9,4,9,3,9,1001,9,2,9,4,9,3,9,102,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,101,2,9,9,4,9,3,9,1001,9,1,9,4,9,3,9,101,1,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,102,2,9,9,4,9,99,3,9,101,1,9,9,4,9,3,9,101,1,9,9,4,9,3,9,102,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,101,2,9,9,4,9,3,9,101,2,9,9,4,9,3,9,1001,9,2,9,4,9,3,9,1001,9,2,9,4,9,3,9,102,2,9,9,4,9,3,9,1001,9,1,9,4,9,99,3,9,101,2,9,9,4,9,3,9,101,2,9,9,4,9,3,9,1001,9,2,9,4,9,3,9,102,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,101,1,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,2,9,9,4,9,3,9,1001,9,2,9,4,9,99]
-# Part 1
-#maxThrusterSignal=0
-#for phaseSettings in itertools.permutations([0,1,2,3,4]):
-#    inputSignal=0
-#    for i in range(5):
-#        phaseSetting=phaseSettings[i]
-#        computer = ShipComputer(program.copy(), [phaseSetting, inputSignal])
-#        inputSignal = computer.run()
-#    if inputSignal>maxThrusterSignal:
-#        maxThrusterSignal=inputSignal
-#print(maxThrusterSignal)
-
-# Part 2
-maxThrusterSignal=0
-currentOutputE = 0
-for phaseSettings in itertools.permutations([5,6,7,8,9]):
-    computerA = ShipComputer(program.copy(), [phaseSettings[0]])
-    computerB = ShipComputer(program.copy(), [phaseSettings[1]])
-    computerC = ShipComputer(program.copy(), [phaseSettings[2]])
-    computerD = ShipComputer(program.copy(), [phaseSettings[3]])
-    computerE = ShipComputer(program.copy(), [phaseSettings[4]])
-    computers = [computerA, computerB, computerC, computerD, computerE]
-    
-    i = 0
-    output = 0
-    while output is not None:
-        currentComputer = computers[i%5]
-        currentComputer.addArgument(output)
-        output = currentComputer.run()
-
-        if i%5 == 4 and output is not None:
-            currentOutputE = output
-        i += 1
-    if currentOutputE>maxThrusterSignal:
-        maxThrusterSignal=currentOutputE
-
-print(maxThrusterSignal)
-print(currentOutputE)

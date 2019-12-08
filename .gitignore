@@ -25,5 +25,6 @@ hs_err_pid*
 
 # Python
 __pycache__/
-*.py[cod]
+*.pyc
+*.pyd
 *$py.class
