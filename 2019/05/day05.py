@@ -23,6 +23,7 @@ def newintcomputer(input, inputArray):
     while pointer<=len(inputArray):
         anweisung=auslesenInstractionAndMode(int(inputArray[pointer]))
         op=anweisung[0]
+        print(pointer)
         if(op == 99):
             break
         if(op==1):
