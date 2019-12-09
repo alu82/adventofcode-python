@@ -25,11 +25,11 @@ print(maxThrusterSignal)
 maxThrusterSignal=0
 lastOutputE = 0
 for phaseSettings in itertools.permutations([5,6,7,8,9]):
-    computerA = ShipComputer(input.copy(), [phaseSettings[0]])
-    computerB = ShipComputer(input.copy(), [phaseSettings[1]])
-    computerC = ShipComputer(input.copy(), [phaseSettings[2]])
-    computerD = ShipComputer(input.copy(), [phaseSettings[3]])
-    computerE = ShipComputer(input.copy(), [phaseSettings[4]])
+    computerA = ShipComputer(input.copy(), [phaseSettings[0]], True)
+    computerB = ShipComputer(input.copy(), [phaseSettings[1]], True)
+    computerC = ShipComputer(input.copy(), [phaseSettings[2]], True)
+    computerD = ShipComputer(input.copy(), [phaseSettings[3]], True)
+    computerE = ShipComputer(input.copy(), [phaseSettings[4]], True)
     computers = itertools.cycle([computerA, computerB, computerC, computerD, computerE])
 
     output = 0
