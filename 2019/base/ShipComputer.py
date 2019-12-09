@@ -2,12 +2,6 @@ import itertools
 
 class ShipComputer:
 
-    name = ""
-    program = []
-    arguments = []
-    pointer = 0
-    running = False
-
     ADD = 1
     MUL = 2
     IN = 3
@@ -18,11 +12,15 @@ class ShipComputer:
     EQU = 8
     EXT = 99
 
-    def __init__(self, name, program, arguments):
-        self.name = name
+    def __init__(self, program, arguments):
+        self.program = []
         for value in program:
             self.program.append(int(value))
         self.arguments = arguments
+        self.output = []
+        self.pointer = 0
+        self.running = False
+        self.terminated = False
 
     def getNextOperation(self):
         return self.program[self.pointer]%100
@@ -60,6 +58,12 @@ class ShipComputer:
     def addArgument(self, argument):
         self.arguments.append(argument)
 
+    def getLastOutput(self):
+        if(len(self.output)>0):
+            return self.output[-1]
+        else:
+            return None
+
     def executeNextOperation(self):
         op = self.getNextOperation()
         values = self.getNextValues()
@@ -77,7 +81,7 @@ class ShipComputer:
         if op == self.OUT:
             self.pointer += 2
             self.running = False
-            return args[0]
+            self.output.append(args[0])
         if op == self.JNZ:
             if args[0] != 0:
                 self.pointer = args[1]
@@ -102,11 +106,9 @@ class ShipComputer:
             self.pointer += 4
         if op == self.EXT:
             self.running = False
-            return None
+            self.terminated = True
 
     def run(self):
         self.running = True
-        result = None
         while self.running and self.pointer<len(self.program):
-            result = self.executeNextOperation()
-        return result
+            self.executeNextOperation()
