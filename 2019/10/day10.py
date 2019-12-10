@@ -48,7 +48,10 @@ def part1(asteroids):
 
 #Part 2
 def part2(asteroids, laserPosition):
-    otherAsteroids = {}
+    # idea is, to build a dictionary: the keys are the degrees of an asteroid from the laser starting position, lower degrees means the laser passes first
+    # the values are a list of asteroids in the direction defined by the degrees
+    # this list is sorted by their manhattan distance from the laser, so that the nearest asteroid is the first in the list to get vaporized, yeah!
+    otherAsteroids = {} 
     for asteroid in asteroids:
         if not laserPosition == asteroid:
             offset = (asteroid[0] - laserPosition[0], asteroid[1] - laserPosition[1])
@@ -69,6 +72,7 @@ def part2(asteroids, laserPosition):
             break
 
     return vaporized
+
 # Run methods
 script_dir = os.path.dirname(__file__)
 inputFile = open(script_dir + "/input", "r")
