@@ -1,17 +1,17 @@
 import os
 import itertools
-from base.ShipComputer import ShipComputer
+from base.IntcodeComputer import IntcodeComputer
 import time
 
 #Part 1
 def part1(program):
-    computer = ShipComputer(program, [1])
+    computer = IntcodeComputer(program, [1])
     computer.run()
     print(computer.output)
 
 # Part 2
 def part2(program):
-    computer = ShipComputer(program, [2])
+    computer = IntcodeComputer(program, [2])
     computer.run()
     print(computer.output)
 

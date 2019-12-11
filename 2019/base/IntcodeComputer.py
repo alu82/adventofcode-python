@@ -1,6 +1,6 @@
 import itertools
 
-class ShipComputer:
+class IntcodeComputer:
 
     ADD = 1 # Add
     MUL = 2 # Multiplication

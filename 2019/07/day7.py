@@ -1,6 +1,6 @@
 import os
 import itertools
-from base.ShipComputer import ShipComputer
+from base.IntcodeComputer import IntcodeComputer
 
 script_dir = os.path.dirname(__file__)
 inputFile = open(script_dir + "/input", "r")
@@ -14,7 +14,7 @@ for phaseSettings in itertools.permutations([0,1,2,3,4]):
     inputSignal=0
     for i in range(5):
         phaseSetting=phaseSettings[i]
-        computer = ShipComputer(input.copy(), [phaseSetting, inputSignal])
+        computer = IntcodeComputer(input.copy(), [phaseSetting, inputSignal])
         computer.run()
         inputSignal = computer.getLastOutput()
     if inputSignal>maxThrusterSignal:
@@ -25,11 +25,11 @@ print(maxThrusterSignal)
 maxThrusterSignal=0
 lastOutputE = 0
 for phaseSettings in itertools.permutations([5,6,7,8,9]):
-    computerA = ShipComputer(input.copy(), [phaseSettings[0]], True)
-    computerB = ShipComputer(input.copy(), [phaseSettings[1]], True)
-    computerC = ShipComputer(input.copy(), [phaseSettings[2]], True)
-    computerD = ShipComputer(input.copy(), [phaseSettings[3]], True)
-    computerE = ShipComputer(input.copy(), [phaseSettings[4]], True)
+    computerA = IntcodeComputer(input.copy(), [phaseSettings[0]], True)
+    computerB = IntcodeComputer(input.copy(), [phaseSettings[1]], True)
+    computerC = IntcodeComputer(input.copy(), [phaseSettings[2]], True)
+    computerD = IntcodeComputer(input.copy(), [phaseSettings[3]], True)
+    computerE = IntcodeComputer(input.copy(), [phaseSettings[4]], True)
     computers = itertools.cycle([computerA, computerB, computerC, computerD, computerE])
 
     output = 0

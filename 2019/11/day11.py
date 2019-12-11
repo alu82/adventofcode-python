@@ -1,5 +1,5 @@
 import os
-from base.ShipComputer import ShipComputer
+from base.IntcodeComputer import IntcodeComputer
 from collections import deque
 import colorama
 
@@ -18,7 +18,7 @@ class Robo:
     TURN_RIGHT=1
 
     def __init__(self, program, startColor):
-        self.brain=ShipComputer(program,[], True)
+        self.brain=IntcodeComputer(program,[], True)
         self.panel=(0,0)
         self.facing=deque([self.UP, self.RIGHT, self.DOWN, self.LEFT])
         self.path=[self.panel]
@@ -62,8 +62,8 @@ class Robo:
 def drawPanel(panel):
     block = u'\u2588'
     colors = {
-        0: colorama.Fore.BLACK,
-        1: colorama.Fore.WHITE,
+        Robo.BLACK: colorama.Fore.BLACK,
+        Robo.WHITE: colorama.Fore.WHITE,
     }
     
     minRow = min(panel.keys(), key=lambda panel:panel[1])[1]
@@ -82,8 +82,6 @@ def drawPanel(panel):
 
     print(drawing)
             
-
-
 # Run methods
 script_dir = os.path.dirname(__file__)
 inputFile = open(script_dir + "/input", "r")
