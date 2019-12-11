@@ -73,7 +73,6 @@ def drawPanel(panel):
             color = colors[panel.get((col, row), 0)]
             drawing += color + block
         drawing += "\n"
-
     print(drawing)
             
 # Run methods
