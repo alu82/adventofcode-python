@@ -3,7 +3,6 @@ from base.IntcodeComputer import IntcodeComputer
 from collections import deque
 import colorama
 
-
 class Robo:
     
     UP=(0,-1)
@@ -26,14 +25,11 @@ class Robo:
         self.panelGrid[self.panel] = startColor
 
     def getColorForPanel(self):
-        if self.panel not in self.panelGrid:
-            self.panelGrid[self.panel]=self.BLACK
-        return self.panelGrid[self.panel]
+        return self.panelGrid.get(self.panel, self.BLACK)
     
     def move(self):
         self.panel=(self.panel[0]+self.facing[0][0], self.panel[1]+self.facing[0][1])
         self.path.append(self.panel)
-        return self.panel
 
     def rotate(self, direction):
         if direction==self.TURN_LEFT:
@@ -58,7 +54,7 @@ class Robo:
             self.rotate(nextRotation)
             self.move()
 
-
+# panel of type dictionary with keys as 2-tupel (col, row) and values as colors
 def drawPanel(panel):
     block = u'\u2588'
     colors = {
@@ -74,9 +70,7 @@ def drawPanel(panel):
     drawing = ""
     for row in range(minRow, maxRow+1):
         for col in range(minCol, maxCol+1):
-            color = colors[0]
-            if (col, row) in panel:
-                color = colors[panel[(col, row)]]
+            color = colors[panel.get((col, row), 0)]
             drawing += color + block
         drawing += "\n"
 
@@ -89,11 +83,11 @@ line = inputFile.readline()
 program = line.split(",")
 
 # Part 1
-robo=Robo(program.copy(), Robo.BLACK)
-robo.work()
-print(len(set(robo.path)))
+robo1=Robo(program.copy(), Robo.BLACK)
+robo1.work()
+print(len(set(robo1.path)))
 
 # Part 2 
-robo=Robo(program.copy(), Robo.WHITE)
-robo.work()
-drawPanel(robo.panelGrid)
+robo2=Robo(program.copy(), Robo.WHITE)
+robo2.work()
+drawPanel(robo2.panelGrid)
