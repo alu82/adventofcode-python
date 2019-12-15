@@ -21,6 +21,7 @@ class IntcodeComputer:
         self.output = []
         self.pointer = 0
         self.running = False
+        self.waiting = False # Waiting for input
         self.terminated = False
         self.pauseOnOutput = pauseOnOutput
         self.relativeBase = 0
@@ -82,8 +83,13 @@ class IntcodeComputer:
             self.writeValue(args[0]*args[1], modes[2], values[2]) 
             self.pointer += 4
         elif op == self.IN:
-            self.writeValue(self.arguments.pop(0),modes[0], values[0])
-            self.pointer += 2
+            if len(self.arguments) > 0:
+                self.waiting = False
+                self.writeValue(self.arguments.pop(0),modes[0], values[0])
+                self.pointer += 2
+            else:
+                self.running = False
+                self.waiting = True
         elif op == self.OUT:
             self.pointer += 2
             self.running = False
@@ -119,10 +125,11 @@ class IntcodeComputer:
         
     def run(self):
         self.running = True
+        self.waiting = False
         if self.pauseOnOutput:
-            while self.running:
+            while self.running and not self.waiting:
                 self.executeNextOperation()
         else:
-            while not self.terminated:
+            while not self.terminated and not self.waiting:
                 self.executeNextOperation()
                 self.running = True # in case an output operation set the status
