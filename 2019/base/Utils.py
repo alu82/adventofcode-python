@@ -1,4 +1,6 @@
-def drawPanel(panel, colors):
+import colorama
+
+def drawPanel(panel, colors, defaultColor=0):
     block = u'\u2588'
     minRow = min(panel.keys(), key=lambda panel:panel[1])[1]
     maxRow = max(panel.keys(), key=lambda panel:panel[1])[1]
@@ -8,7 +10,7 @@ def drawPanel(panel, colors):
     drawing = ""
     for row in range(minRow, maxRow+1):
         for col in range(minCol, maxCol+1):
-            color = colors[panel.get((col, row), 0)]
+            color = colors[panel.get((col, row), defaultColor)]
             drawing += color + block
         drawing += "\n"
     print(drawing)
