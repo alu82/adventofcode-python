@@ -10,7 +10,8 @@ def drawPanel(panel, colors, defaultColor=0):
     drawing = ""
     for row in range(minRow, maxRow+1):
         for col in range(minCol, maxCol+1):
-            color = colors[panel.get((col, row), defaultColor)]
+            colorKey = panel.get((col, row), defaultColor)
+            color = colors.get(colorKey, colors[defaultColor])
             drawing += color + block
         drawing += "\n"
     print(drawing)

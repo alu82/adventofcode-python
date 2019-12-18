@@ -55,14 +55,19 @@ class IntcodeComputer:
             if address not in self.program:
                 self.program[address] = 0
             returnValue = self.program[address]
-        return returnValue
+        return int(returnValue)
 
     def writeValue(self, value, mode, address):
         address = address + (self.relativeBase if mode==2 else 0)
-        self.program[address] = value
+        self.program[address] = int(value)
 
     def addArgument(self, argument):
         self.arguments.append(argument)
+
+    def addAsciiArguments(self, argument):
+        for a in argument:
+            self.addArgument(ord(a))
+        self.addArgument(10)
 
     def getLastOutput(self):
         if(len(self.output)>0):
