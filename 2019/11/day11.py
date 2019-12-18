@@ -1,5 +1,5 @@
 import os
-from base.IntcodeComputer import IntcodeComputer
+from aoc.IntcodeComputer import IntcodeComputer
 from collections import deque
 import colorama
 

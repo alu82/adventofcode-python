@@ -1,7 +1,7 @@
 import os
 import itertools
-from base.IntcodeComputer import IntcodeComputer
-from base.Utils import drawPanel
+from aoc.IntcodeComputer import IntcodeComputer
+from aoc.Utils import drawPanel
 from collections import deque
 import colorama
 from random import randrange

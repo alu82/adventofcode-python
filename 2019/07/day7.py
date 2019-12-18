@@ -1,6 +1,6 @@
 import os
 import itertools
-from base.IntcodeComputer import IntcodeComputer
+from aoc.IntcodeComputer import IntcodeComputer
 
 script_dir = os.path.dirname(__file__)
 inputFile = open(script_dir + "/input", "r")

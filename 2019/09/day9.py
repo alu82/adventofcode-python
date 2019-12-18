@@ -1,6 +1,6 @@
 import os
 import itertools
-from base.IntcodeComputer import IntcodeComputer
+from aoc.IntcodeComputer import IntcodeComputer
 import time
 
 #Part 1
