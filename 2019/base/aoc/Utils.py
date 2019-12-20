@@ -28,7 +28,7 @@ def drawMixPanel(panel, colors={}, defaultChar=' '):
     drawing = ""
     for row in range(minRow, maxRow+1):
         for col in range(minCol, maxCol+1):
-            char = panel.get((col, row), defaultChar)
+            char = str(panel.get((col, row), defaultChar))
             if char in colors:
                 char = colors.get(char) + block
             drawing += char
