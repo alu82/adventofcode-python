@@ -26,14 +26,19 @@ class Path:
     def __init__(self, area, position, path, keys):
         self.area = area
         self.position = position
+        self.path = path
+        self.keys = keys
     
     def goTo(self, node):
         itemPosition = list(filter(lambda pos: self.area[pos] == node[0], self.area))[0]
+        if node[0] in keys:
+            self.keys.add(node[0])
+        self.path.append(node)
         self.area[itemPosition] = YOU
         self.area[self.position] = PASSAGE
         self.position = itemPosition
     
-    def getNextNodes(self, foundKeys):
+    def getNextNodes(self):
         workingArea = self.area.copy()
         nextNodes = set()
         distance = 0
@@ -47,13 +52,13 @@ class Path:
                 if self.area[start] in keys:
                     nextNodes.add((self.area[start], distance))
                     tmpStarts.add(start)
-                if self.area[start] in doors and not self.foundKeyForDoor(self.area[start], foundKeys):
+                if self.area[start] in doors and not self.foundKeyForDoor(self.area[start]):
                     tmpStarts.add(start)
             starts = starts - tmpStarts
         return nextNodes
 
-    def foundKeyForDoor(self, door, foundKeys):
-        return str.lower(door) in foundKeys
+    def foundKeyForDoor(self, door):
+        return str.lower(door) in self.keys
             
     def nextStep(self, paths, starts):
         newStarts = set([])
@@ -71,57 +76,56 @@ class Path:
             adjacents.append(tuple(map(add, position, direction)))
         return adjacents
 
+    def getPathLength(self):
+        pathLength = 0
+        for step in self.path:
+            pathLength += step[1]
+        return pathLength
+
 
 class PathFinder:
 
     def __init__(self, area):
+        self.paths = []
         self.area = dict(filter(lambda item: item[1] != WALL, area.items()))
         self.start = list(filter(lambda node: area[node] == YOU, area))[0]
-        self.distance = {}
-        self.done = {}
-        self.done[YOU] = 0
-        for v in set(area.values()):
-            if v in keys:
-                self.distance[v] = math.inf
-        self.pred = {}
 
-    def dijkstra(self):
-        graph = Path(self.area.copy(), self.start, [], set())
-        
-        self.update(YOU, graph.getNextNodes(self.getKeys(YOU)))
+    def nearestNeighbor(self):
+        path = Path(self.area.copy(), self.start, [], set())
+        nextNodes = path.getNextNodes()
+        while len(nextNodes) > 0:
+            nearest = min(nextNodes, key=lambda node:node[1])
+            path.goTo(nearest)
+            nextNodes = path.getNextNodes()
+        return path.getPathLength()
 
-        while len(self.distance.keys()) > 0:
-            nearest = min(self.distance, key=self.distance.get)
-            self.done[nearest] = self.distance.pop(nearest)
-            graph.goTo(nearest)
-            print(nearest, self.getKeys(nearest), self.pred)
-            self.update(nearest, graph.getNextNodes(self.getKeys(nearest)))
-
-        print(self.distance)
-        print(self.done)
-
-    def getKeys(self, base):
-        if base in self.pred:
-            return list(base) + self.getKeys(self.pred[base])
-        else:
-            return list(base)
-
-
-    def update(self, base, nextNodes):
-        baseDistance = self.done[base]
-        for nodeItem in nextNodes:
-            node = nodeItem[0]
-            distance = nodeItem[1]
-            if baseDistance + distance < self.distance[node]:
-                self.distance[node] = baseDistance + distance
-                self.pred[node] = base
-
-
+    def findShortestPathLength(self):
+        path = Path(self.area.copy(), self.start, [], set())
+        self.paths.append(path)
+        self.handlePath(path, self.nearestNeighbor())
+        shortestPathLength = math.inf
+        for p in self.paths:
+            if p.getPathLength() < shortestPathLength:
+                shortestPathLength = p.getPathLength()
+                print(p.path)
+        return shortestPathLength
 
     def clonePath(self, path):
         return Path(path.area.copy(), path.position, path.path.copy(), path.keys.copy())
 
-    
+    def handlePath(self, path, upperBound):
+        if path.getPathLength() < upperBound:
+            nextNodes = path.getNextNodes()
+            print(path.path)
+            for nextNode in nextNodes:
+                newPath = self.clonePath(path)
+                self.paths.append(newPath)
+                newPath.goTo(nextNode)
+                self.handlePath(newPath, upperBound)
+            if len(nextNodes) > 0:
+                self.paths.remove(path)
+        else:
+            self.paths.remove(path)
 
 def getArea(input):
     panel = {}
@@ -139,11 +143,11 @@ def getArea(input):
 
 def part1(input):
     area = getArea(input)
-    pathFinder = PathFinder(area) 
-    pathFinder.dijkstra()
+    pathFinder = PathFinder(area)
+    return pathFinder.findShortestPathLength()
 
 # Open input files and get intcodeprogram
 script_dir = os.path.dirname(__file__)
 inputFile = open(script_dir + "/input", "r")
 
-part1(inputFile)
+print(part1(inputFile))
