@@ -2,12 +2,16 @@ import os
 from string import ascii_uppercase as UPPER
 import math
 from operator import add
+from Dijkstra import Dijkstra, Graph
 
 UP = (0, -1)
 DOWN = (0, 1)
 LEFT = (-1, 0)
 RIGHT = (1, 0)
 DIRECTIONS = [UP, RIGHT, DOWN, LEFT]
+
+OUTER = '_OUTER'
+INNER = '_INNER'
 
 PASSAGE = '.'
 WALL = '#'
@@ -45,6 +49,26 @@ def getMaze(input):
         col = 0
     return maze
 
+def getPortalName(maze, pos, name):
+    if name == 'AA' or name == 'ZZ':
+        return name
+
+    maxRow = max(maze.keys(), key=lambda maze:maze[1])[1]
+    maxCol = max(maze.keys(), key=lambda maze:maze[0])[0]
+
+    posCol = pos[0]
+    posRow = pos[1]
+
+    isOuter = (posCol < 2 or posRow < 2) or (maxCol - posCol < 3 or maxRow - posRow < 3)
+    if isOuter:
+        name += OUTER
+    else:
+        name += INNER
+
+    return name
+    
+    
+
 def getPortals(maze):
     letters = dict(filter(lambda item: item[1] in UPPER, maze.items()))
     portals = {}
@@ -58,12 +82,12 @@ def getPortals(maze):
                 portalName = maze[letterTile] + letter
             else:
                 portalName = letter + maze[letterTile]
-            portalTiles = portals.get(portalName, [])
-            portalTiles.append(passageTile)
-            portals[portalName] = portalTiles
+
+            portalName = getPortalName(maze, pos, portalName)
+            portals[portalName] = passageTile
     return portals
 
-def getNextNodes(maze, position, nodes, portals):
+def getNextNodes(maze, position, nodes):
     mazeCopy = maze.copy()
     nextNodes = set()
     distance = 0
@@ -71,7 +95,7 @@ def getNextNodes(maze, position, nodes, portals):
 
     while len(starts) > 0:
         distance += 1
-        starts = nextStep(mazeCopy, starts, portals)
+        starts = nextStep(mazeCopy, starts)
         tmpStarts = set()
         for start in starts:
             if start in nodes:
@@ -80,54 +104,15 @@ def getNextNodes(maze, position, nodes, portals):
         starts = starts - tmpStarts
     return nextNodes
 
-def nextStep(maze, starts, portals):
+def nextStep(maze, starts):
     newStarts = set([])
     for start in starts:
         adjacents = getNeighbors(start)
-        if start in portals:
-            adjacents.append(portals[start])
         maze.pop(start, None)
         for adjacent in adjacents:
             if adjacent in maze and maze[adjacent] == PASSAGE:
                 newStarts.add(adjacent)
     return newStarts
-
-def djikstra(nodes, maze, portals, start, end):
-    print(nodes)
-    distance = {}
-    pred = {}
-    done = {}
-    for node in nodes:
-        distance[node] = math.inf
-        pred[node] = None
-    
-    
-    done[start] = 0
-    
-    currentNode = start
-
-    nextNodes = getNextNodes(maze, currentNode, nodes, portals)
-    for nextNode in nextNodes:
-        distance[nextNode[0]] = nextNode[1]
-        pred[nextNode[0]] = nextNode[1]
-
-    while len(distance.keys()) > 0:
-        print(distance)
-        nearest = min(distance, key=distance.get)
-        print(currentNode, nearest)
-        print("----------------------")
-        done[nearest] = distance.pop(nearest)
-        currentNode = nearest
-
-        nextNodes = getNextNodes(maze, currentNode, nodes, portals)
-        baseDistance = done[nearest]
-        for nodeItem in nextNodes:
-            newDistance = baseDistance + nodeItem[1]
-            currentDistance = distance[nextNode[0]]
-            if newDistance < currentDistance:
-                distance[nodeItem[0]] = newDistance
-                pred[nodeItem[0]] = currentNode
-
 
 
 # Open input files and get intcodeprogram
@@ -137,15 +122,29 @@ inputFile = open(script_dir + "/input", "r")
 maze = getMaze(inputFile)
 portals = getPortals(maze)
 
-tmpPortals = {}
-for portal in portals.values():
-    if len(portal) > 1:
-        tmpPortals[portal[0]] = portal[1]
-        tmpPortals[portal[1]] = portal[0]
+print(portals)
 
-allPortalNodes = []
-for portalNodes in portals.values():
-    allPortalNodes = allPortalNodes + portalNodes
+edges = {}
+for portal in portals:
+    nextNodes = getNextNodes(maze, portals[portal], list(portals.values()))
+    for nextNode in nextNodes:
+        nextPortal = list(filter(lambda node: portals[node] == nextNode[0], portals))[0]
+        edge = (portal, nextPortal)
+        distance = nextNode[1]
+        edges[edge] = distance
 
-djikstra(allPortalNodes, maze, tmpPortals, portals['AA'][0], portals['ZZ'][0])
+# add the portals - dirty
+for portal in portals.keys():
+    if portal[-len(OUTER):] == OUTER:
+        otherPortal = portal.replace(OUTER, INNER)
+        edge1 = (portal, otherPortal)
+        edge2 = (otherPortal, portal)
+        edges[edge1] = 1
+        edges[edge2] = 1
+print(edges)
+graph = Graph(edges)
+dijkstra = Dijkstra(graph)
+
+print(dijkstra.shortestPath('AA', 'ZZ'))
+print(dijkstra.shortestDistance('AA', 'ZZ'))
 
