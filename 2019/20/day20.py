@@ -114,6 +114,83 @@ def nextStep(maze, starts):
                 newStarts.add(adjacent)
     return newStarts
 
+def isStartOrEndEdge(edge):
+    isStartEdge = isStart(edge[0]) or isStart(edge[1])
+    isEndEdge = isEnd(edge[0]) or isEnd(edge[1])
+    return isStartEdge or isEndEdge
+
+def isStart(node):
+    return node == 'AA'
+
+def isEnd(node):
+    return node == 'ZZ'
+
+def isOuter(node):
+    return OUTER in node
+
+def isInner(node):
+    return INNER in node
+
+def part1(edges, portals):
+
+    # add the portals to the edges
+    for portal in portals.keys():
+        if portal[-len(OUTER):] == OUTER:
+            otherPortal = portal.replace(OUTER, INNER)
+            edge1 = (portal, otherPortal)
+            edge2 = (otherPortal, portal)
+            edges[edge1] = 1
+            edges[edge2] = 1
+
+    graph = Graph(edges)
+    dijkstra = Dijkstra(graph)
+    print(dijkstra.shortestDistance('AA', 'ZZ'))
+    #print(dijkstra.shortestPath('AA', 'ZZ'))
+
+def part2(edges, portals):
+    maxLevel = 60
+    recursiveEdges = {}
+    for level in range(maxLevel):
+        levelSuffix = '_' + str(level)
+        levelUpSuffix = '_' + str(level-1)
+        levelDownSuffix = '_' + str(level+1)
+        
+        for edge in edges:
+            if level == 0 and isStartOrEndEdge(edge):
+                if isStart(edge[0]) or isEnd(edge[0]):
+                    levelEdgeCol = edge[0]
+                else:
+                    levelEdgeCol = edge[0] + levelSuffix
+                if isStart(edge[1]) or isEnd(edge[1]):
+                    levelEdgeRow = edge[1]
+                else:
+                    levelEdgeRow = edge[1] + levelSuffix
+                
+                levelEdge = (levelEdgeCol, levelEdgeRow)
+                recursiveEdges[levelEdge] = edges[edge]
+                
+            if not isStartOrEndEdge(edge):
+                levelEdge = (edge[0] + levelSuffix, edge[1] + levelSuffix)
+                recursiveEdges[levelEdge] = edges[edge]
+
+        for portal in portals.keys():
+            if isInner(portal): # go down a level
+                levelEdgeCol = portal + levelSuffix
+                levelEdgeRow = portal.replace(INNER, OUTER) + levelDownSuffix
+            elif isOuter(portal) and level > 0: # go up a level
+                levelEdgeCol = portal + levelSuffix
+                levelEdgeRow = portal.replace(OUTER, INNER) + levelUpSuffix
+            else: # start or end portal
+                continue
+            
+            portalEdge = (levelEdgeCol, levelEdgeRow)
+            recursiveEdges[portalEdge] = 1
+
+    graph = Graph(recursiveEdges)
+    dijkstra = Dijkstra(graph)
+    print(dijkstra.shortestDistance('AA', 'ZZ'))
+    #print(dijkstra.shortestPath('AA', 'ZZ'))
+
 
 # Open input files and get intcodeprogram
 script_dir = os.path.dirname(__file__)
@@ -121,8 +198,6 @@ inputFile = open(script_dir + "/input", "r")
 
 maze = getMaze(inputFile)
 portals = getPortals(maze)
-
-print(portals)
 
 edges = {}
 for portal in portals:
@@ -133,18 +208,6 @@ for portal in portals:
         distance = nextNode[1]
         edges[edge] = distance
 
-# add the portals - dirty
-for portal in portals.keys():
-    if portal[-len(OUTER):] == OUTER:
-        otherPortal = portal.replace(OUTER, INNER)
-        edge1 = (portal, otherPortal)
-        edge2 = (otherPortal, portal)
-        edges[edge1] = 1
-        edges[edge2] = 1
-print(edges)
-graph = Graph(edges)
-dijkstra = Dijkstra(graph)
-
-print(dijkstra.shortestPath('AA', 'ZZ'))
-print(dijkstra.shortestDistance('AA', 'ZZ'))
+part1(edges.copy(), portals.copy())
+part2(edges.copy(), portals.copy())
 
