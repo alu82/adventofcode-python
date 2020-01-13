@@ -2,6 +2,7 @@ import os
 from aoc.IntcodeComputer import IntcodeComputer
 from threading import Thread
 from threading import RLock
+import time
 
 class Packet:
     def __init__(self, target, x, y):
@@ -28,8 +29,10 @@ class Network:
     def startNetwork(self):
         for computer in self.computers.values():
             computer.run()
+        self.nat.run()
 
     def stopNetwork(self):
+        self.nat.shutdown()
         for computer in self.computers.values():
             computer.shutdown()
 
@@ -50,6 +53,8 @@ class Nat:
         self.network = network
         self.stopOnFirst = stopOnFirst
         self.lastPacket = None
+        self.lastSendPacket = None
+        self.running = False
     
     def receivePacket(self, packet):
         self.lastPacket = packet
@@ -59,7 +64,34 @@ class Nat:
             self.lastPacket.print()
 
     def monitor(self):
-        pass
+        while self.running:
+            idle = True
+            for computer in self.network.computers.values():
+                if len(computer.inQueue) > 0:
+                    idle = False
+                    break
+            
+            if idle and self.lastPacket is not None:
+                time.sleep(5)
+                halt = False
+                if self.lastSendPacket is not None:
+                    halt = self.lastSendPacket.y == self.lastPacket.y
+
+                self.lastSendPacket = Packet(0, self.lastPacket.x, self.lastPacket.y)
+                print("waking up network" + str(self.lastPacket.y))
+                self.network.dispatchPacket(self.lastSendPacket)
+                if halt:
+                    self.network.stopNetwork()
+            time.sleep(5)
+
+    
+    def run(self):
+        monitorThread = Thread(target=self.monitor)
+        self.running = True
+        monitorThread.start()
+
+    def shutdown(self):
+        self.running = False
 
 class NetworkComputer:
 
@@ -133,5 +165,5 @@ line = inputFile.readline()
 program = line.split(",")
 
 
-part1(program.copy())
-#part2(program.copy())
+# part1(program.copy())
+part2(program.copy())
