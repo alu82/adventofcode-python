@@ -21,9 +21,6 @@ def solve(program):
                 print(accumulator)
                 break
 
-
-
-
 def execute_program(program):
     accumulator = 0
     ex_lines = set()
