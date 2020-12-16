@@ -3,11 +3,11 @@ import time
 
 def solve_1(input):
     ranges = extract_ranges(input)
-    print(sum([calc_ticket_error(t, ranges.values())[1] for t in get_nearby_tickets(input)]))
+    print(sum([sum(get_ticket_error(t, ranges.values())) for t in get_nearby_tickets(input)]))
 
 def solve_2(input):
     ranges = extract_ranges(input)
-    valid_tickets = [t for t in get_nearby_tickets(input) if not calc_ticket_error(t, ranges.values())[0]]
+    valid_tickets = [t for t in get_nearby_tickets(input) if not get_ticket_error(t, ranges.values())]
     my_ticket = get_my_ticket(input)
     
     field_indexes = dict()
@@ -53,33 +53,20 @@ def get_my_ticket(input):
 
 def calc_index_for_ranges(ranges, tickets, occ_indexes):
     possible_indexes = {i for i in range(len(tickets[0]))} - occ_indexes
-
     for ticket in tickets:
         for idx, value in enumerate(ticket):
-            valid = False
-            for field_range in ranges:
-                if value in field_range:
-                    valid = True
+            valid = any(value in field_range for field_range in ranges)
             if not valid and idx in possible_indexes:
                 possible_indexes.remove(idx)
-    
     return possible_indexes
 
-def calc_ticket_error(ticket, ranges):
-    error_sum = 0
-    error = False
+def get_ticket_error(ticket, ranges):
+    errors = list()
     for value in ticket:
-        is_valid = False
-        for field_ranges in ranges:
-            for field_range in field_ranges:
-                if value in field_range:
-                    is_valid = True
-                    break
+        is_valid = any(value in field_range for field_ranges in ranges for field_range in field_ranges)
         if not is_valid:
-            error = True
-            error_sum += value
-    return error, error_sum
-
+            errors.append(value)
+    return errors
 
 script_dir = os.path.dirname(__file__)
 with open(script_dir + "/input", "r") as myInput:
