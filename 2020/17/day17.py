@@ -8,26 +8,24 @@ from itertools import product
 Coordinate = namedtuple("Coordinate", ["x", "y", "z", "w"])
 
 def solve_1(input):
-    grid = simulate(get_grid(input),cycles=6,dimensions=3)
+    grid = simulate(get_grid(input),cycles=6,w_dimension=False)
     print(len([v for v in grid.values() if v == "#"]))
     
 def solve_2(input):
-    grid = simulate(get_grid(input),cycles=6,dimensions=4)
+    grid = simulate(get_grid(input),cycles=6,w_dimension=True)
     print(len([v for v in grid.values() if v == "#"]))
 
-def simulate(grid, cycles, dimensions):
+def simulate(grid, cycles, w_dimension):
     for _ in range(cycles):
         ext_up = max([max(c.x,c.y,c.z,c.w) for c in grid.keys()]) # since we have a default dict we calculate the maximum extension into one dimension
         ext_lo = min([min(c.x,c.y,c.z,c.w) for c in grid.keys()])
         extension = range(ext_lo-1, ext_up+2)
-        w_extension = extension
-        if dimensions == 3:
-            w_extension = range(1)
+        
         new_grid = deepcopy(grid)
         for x in extension:
             for y in extension:
                 for z in extension:
-                    for w in w_extension:
+                    for w in extension if w_dimension else [0]:
                         c_coord = Coordinate(x,y,z,w)
                         c_value = grid[(x,y,z,w)]
                         active = no_active_neighbors(grid, c_coord)
@@ -63,7 +61,6 @@ def print_grid(grid):
             for y in extension:
                 line += grid[(x,y,z)]
             print(line)
-
 
 script_dir = os.path.dirname(__file__)
 with open(script_dir + "/input", "r") as myInput:
