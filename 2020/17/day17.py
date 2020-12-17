@@ -50,18 +50,6 @@ def get_grid(input):
             grid[Coordinate(x,y,0,0)] = value
     return grid
 
-def print_grid(grid):
-    ext_up = max([max(c.x,c.y,c.z,c.w) for c in grid.keys()]) 
-    ext_lo = min([min(c.x,c.y,c.z,c.w) for c in grid.keys()])
-    extension = range(ext_lo-1, ext_up+2)
-    for z in extension:
-        print("z=",z)
-        for x in extension:
-            line = ""
-            for y in extension:
-                line += grid[(x,y,z)]
-            print(line)
-
 script_dir = os.path.dirname(__file__)
 with open(script_dir + "/input", "r") as myInput:
     start_time = time.time()
