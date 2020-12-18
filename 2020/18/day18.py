@@ -1,15 +1,11 @@
 import os
 import time
 
-operators = ["+", "*"]
-
 def solve_1(input):
     return sum([calculate(exp, precendece="none") for exp in input])
     
 def solve_2(input):
-    # add precedence for + here
     return sum([calculate(exp, precendece="add") for exp in input])
-
 
 def calculate(exp, precendece):
     while not exp.isdigit():
