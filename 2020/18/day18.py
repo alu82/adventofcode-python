@@ -36,20 +36,20 @@ def eval_term(term, precedence):
         clean_term = clean_term.replace("(","")
         clean_term = clean_term.replace(")","")
     if precedence == "none":
-        return eval_term_from_behind(clean_term.split(" ")[::-1])
+        return eval_term_precendence_none(clean_term.split(" "))
     elif precedence == "add":
         return eval_term_precedence_add(clean_term.split(" "))
     
-def eval_term_from_behind(term):
+def eval_term_precendence_none(term):
     if len(term) == 1:
         return int(term[0])
     else:
-        curr = int(term.pop(0))
-        op = term.pop(0)
+        curr = int(term.pop())
+        op = term.pop()
         if op == "+":
-            return curr + eval_term_from_behind(term)
+            return curr + eval_term_precendence_none(term)
         elif op == "*":
-            return curr * eval_term_from_behind(term)
+            return curr * eval_term_precendence_none(term)
 
 def eval_term_precedence_add(term):
     if len(term) == 1:
@@ -59,7 +59,7 @@ def eval_term_precedence_add(term):
             idx_mult = term.index("*")
             return eval_term_precedence_add(term[:idx_mult]) * eval_term_precedence_add(term[idx_mult+1:])
         else:
-            return eval_term_from_behind(term)
+            return eval_term_precendence_none(term)
         
 with open(os.path.dirname(__file__) + "/input", "r") as myInput:
     start_time = time.time()
