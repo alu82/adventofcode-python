@@ -171,34 +171,11 @@ def get_fitting_tiles(tile_grid, row, col, remaining_tiles):
 def get_neighbor_borders(tile_grid, row, col):
     size = len(tile_grid)
     neighbor_borders = [None, None, None, None]
-    # Upper Neighbor
-    row_ = row-1
-    col_ = col
-    if 0 <= row_ < size and 0 <= col_ < size:
-        if tile_grid[row_][col_] is not None:
+    for i, offset in enumerate([(-1,0),(0,1),(1,0),(0,-1)]):
+        row_, col_ = row + offset[0], col + offset[1]
+        if 0 <= row_ < size and 0 <= col_ < size and tile_grid[row_][col_] is not None:
             neighbor = tile_grid[row_][col_]
-            neighbor_borders[0] = neighbor.borders[2]
-    # right Neighbor
-    row_ = row
-    col_ = col+1
-    if 0 <= row_ < size and 0 <= col_ < size:
-        if tile_grid[row_][col_] is not None:
-            neighbor = tile_grid[row_][col_]
-            neighbor_borders[1] = neighbor.borders[3]  
-    # lower Neighbor
-    row_ = row+1
-    col_ = col
-    if 0 <= row_ < size and 0 <= col_ < size:
-        if tile_grid[row_][col_] is not None:
-            neighbor = tile_grid[row_][col_]
-            neighbor_borders[2] = neighbor.borders[0] 
-    # left Neighbor
-    row_ = row
-    col_ = col-1
-    if 0 <= row_ < size and 0 <= col_ < size:
-        if tile_grid[row_][col_] is not None:
-            neighbor = tile_grid[row_][col_]
-            neighbor_borders[3] = neighbor.borders[1]
+            neighbor_borders[i] = neighbor.borders[(i+2)%4]
     return neighbor_borders
 
 def get_left_upper_tile(tiles):
@@ -227,7 +204,6 @@ def get_edges(tiles):
             if other_tile != tile:
                 for ob in other_tile.get_all_possible_borders():
                     other_borders.add(ob)
-
         if len(my_borders.intersection(other_borders)) == 4: # 4 because every border is counted twice
             edges.append(tile)
     return edges
