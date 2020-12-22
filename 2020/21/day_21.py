@@ -52,16 +52,11 @@ def solve_1(input):
     for al in sorted([key for key in ing_allergen.keys()]):
         dangerous_list += "," + ing_allergen[al]
 
-    print(dangerous_list[1:])
-    return None
+    print("part2", dangerous_list[1:])
    
-
-def solve_2(input):
-    pass
 
 with open(os.path.dirname(__file__) + "/input", "r") as myInput:
     start_time = time.time()
     input = [line.strip() for line in myInput]
-    print(solve_1(input))
-    print(solve_2(input))
+    solve_1(input)
     print("--- Execution time %s s ---" % (time.time() - start_time))
