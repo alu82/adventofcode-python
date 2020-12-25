@@ -65,7 +65,7 @@ def solve_2():
     start = cups[0]
 
     current_cup = cup_game.cups[start]
-    for n in range(moves):       
+    for _ in range(moves):       
         dest_cup = cup_game.get_next_destination(current_cup)
         cup_game.move_pickups(current_cup, dest_cup)
         current_cup = current_cup.ncup
